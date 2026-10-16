@@ -1,0 +1,11 @@
+api_platform:
+    swagger:
+        api_keys:
+            JWT:
+                name: Authorization
+                type: header
+    eager_loading:
+        enabled: true
+        max_joins: 100
+        force_eager: false
+

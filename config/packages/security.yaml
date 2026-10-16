@@ -1,0 +1,45 @@
+security:
+    password_hashers:
+        App\Entity\User: "auto"
+
+    providers:
+        users:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/_(profiler|wdt)
+            security: false
+
+        api:
+            pattern: ^/api/
+            stateless: true
+            provider: users
+            jwt: ~
+
+        main:
+            json_login:
+                check_path: /auth
+                username_path: email
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+    access_control:
+        # Swagger / documentation API Platform
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/contexts, roles: PUBLIC_ACCESS }
+        - { path: ^/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/contexts, roles: PUBLIC_ACCESS }
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+
+        # Connexion JWT
+        - { path: ^/auth, roles: PUBLIC_ACCESS }
+
+        # Inscription publique
+        - { path: ^/api/users, methods: ['POST'], roles: PUBLIC_ACCESS }
+
+        # Tout le reste nécessite un JWT valide
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
